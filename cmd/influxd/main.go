@@ -11,6 +11,7 @@ import (
 	"github.com/influxdata/influxdb/cmd/influxd/generate"
 	"github.com/influxdata/influxdb/cmd/influxd/inspect"
 	"github.com/influxdata/influxdb/cmd/influxd/launcher"
+	"github.com/influxdata/influxdb/cmd/influxd/restore"
 	_ "github.com/influxdata/influxdb/query/builtin"
 	_ "github.com/influxdata/influxdb/tsdb/tsi1"
 	_ "github.com/influxdata/influxdb/tsdb/tsm1"
@@ -45,6 +46,7 @@ func init() {
 	rootCmd.AddCommand(launcher.NewCommand())
 	rootCmd.AddCommand(generate.Command)
 	rootCmd.AddCommand(inspect.NewCommand())
+	rootCmd.AddCommand(restore.Command)
 }
 
 // find determines the default behavior when running influxd.
