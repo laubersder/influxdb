@@ -23,6 +23,7 @@
 1. [16341](https://github.com/influxdata/influxdb/pull/16341): Extend pkger apply functionality with ability to provide secrets outside of pkg
 1. [16345](https://github.com/influxdata/influxdb/pull/16345): Add hide headers flag to influx cli task find cmd
 1. [16336](https://github.com/influxdata/influxdb/pull/16336): Manual Overrides for Readiness Endpoint
+1. [14782](https://github.com/influxdata/influxdb/pull/16336): Add view page for Check
 
 ### Bug Fixes
 
