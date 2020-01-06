@@ -132,10 +132,10 @@ class LineProtocolWizard extends PureComponent<Props & WithRouterProps> {
 
 const mstp = (state: AppState): StateProps => {
   const {
-  dataLoading: {
-    steps: {currentStep, bucket},
-  },
-  me: {name},
+    dataLoading: {
+      steps: {currentStep, bucket},
+    },
+    me: {name},
   } = state
 
   const buckets = getAll<Bucket[]>(state, ResourceType.Buckets)
