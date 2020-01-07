@@ -7,38 +7,42 @@ import (
 	"github.com/influxdata/flux"
 )
 
-const DialectType = "null"
+const DialectType = "no-content"
 
-// AddDialectMappings adds the null dialect mapping.
+// AddDialectMappings adds the no-content dialect mapping.
 func AddDialectMappings(mappings flux.DialectMappings) error {
 	return mappings.Add(DialectType, func() flux.Dialect {
-		return NewNullDialect()
+		return NewNoContentDialect()
 	})
 }
 
-type NullDialect struct{}
+// NoContentDialect is a dialect that provides an Encoder that discards query results.
+// When invoking `dialect.Encoder().Encode(writer, results)`, `results` get consumed,
+// while the `writer` is left intact.
+// It is an HTTPDialect that sets the response status code to 204 NoContent.
+type NoContentDialect struct{}
 
-func NewNullDialect() *NullDialect {
-	return &NullDialect{}
+func NewNoContentDialect() *NoContentDialect {
+	return &NoContentDialect{}
 }
 
-func (d *NullDialect) Encoder() flux.MultiResultEncoder {
-	return &NullEncoder{}
+func (d *NoContentDialect) Encoder() flux.MultiResultEncoder {
+	return &NoContentEncoder{}
 }
 
-func (d *NullDialect) DialectType() flux.DialectType {
+func (d *NoContentDialect) DialectType() flux.DialectType {
 	return DialectType
 }
 
-func (d *NullDialect) SetHeaders(w http.ResponseWriter) {
-	w.Header().Set("Content-Type", "text/plain")
+func (d *NoContentDialect) SetHeaders(w http.ResponseWriter) {
+	w.WriteHeader(http.StatusNoContent)
 }
 
-type NullEncoder struct {
+type NoContentEncoder struct {
 	flux.MultiResultEncoder
 }
 
-func (e *NullEncoder) Encode(w io.Writer, results flux.ResultIterator) (int64, error) {
+func (e *NoContentEncoder) Encode(w io.Writer, results flux.ResultIterator) (int64, error) {
 	defer results.Release()
 	// Consume and discard results.
 	for results.More() {
@@ -51,6 +55,6 @@ func (e *NullEncoder) Encode(w io.Writer, results flux.ResultIterator) (int64, e
 			return 0, err
 		}
 	}
-	n, err := w.Write([]byte("null"))
-	return int64(n), err
+	// Do not write anything.
+	return 0, nil
 }

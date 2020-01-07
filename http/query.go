@@ -27,8 +27,8 @@ import (
 )
 
 const (
-	AcceptNullHeaderKey   = "Accept"
-	AcceptNullHeaderValue = "/dev/null"
+	PreferHeaderKey            = "Prefer"
+	PreferNoContentHeaderValue = "return-no-content"
 )
 
 // QueryRequest is a flux query request.
@@ -42,7 +42,7 @@ type QueryRequest struct {
 
 	Org *influxdb.Organization `json:"-"`
 
-	// AcceptNull specifies if the Response to this request should
+	// PreferNoContent specifies if the Response to this request should
 	// contain any result. This is done for avoiding unnecessary
 	// bandwidth consumption in certain cases. For example, when the
 	// query produces side effects and the results do not matter. E.g.:
@@ -50,8 +50,8 @@ type QueryRequest struct {
 	// For example, tasks do not use the results of queries, but only
 	// care about their side effects.
 	// To obtain a QueryRequest with no result, add the header
-	// `Accept: dev/null` to the HTTP request.
-	AcceptNull bool
+	// `Prefer: return-no-content` to the HTTP request.
+	PreferNoContent bool
 }
 
 // QueryDialect is the formatting options for the query response.
@@ -271,12 +271,12 @@ func (r QueryRequest) proxyRequest(now func() time.Time) (*query.ProxyRequest, e
 		noHeader = !*r.Dialect.Header
 	}
 
-	// TODO(nathanielc): Use commentPrefix and dateTimeFormat
-	// once they are supported.
 	var dialect flux.Dialect
-	if r.AcceptNull {
-		dialect = &query.NullDialect{}
+	if r.PreferNoContent {
+		dialect = &query.NoContentDialect{}
 	} else {
+		// TODO(nathanielc): Use commentPrefix and dateTimeFormat
+		// once they are supported.
 		dialect = &csv.Dialect{
 			ResultEncoderConfig: csv.ResultEncoderConfig{
 				NoHeader:    noHeader,
@@ -321,8 +321,8 @@ func QueryRequestFromProxyRequest(req *query.ProxyRequest) (*QueryRequest, error
 		qr.Dialect.CommentPrefix = "#"
 		qr.Dialect.DateTimeFormat = "RFC3339"
 		qr.Dialect.Annotations = d.ResultEncoderConfig.Annotations
-	case *query.NullDialect:
-		qr.AcceptNull = true
+	case *query.NoContentDialect:
+		qr.PreferNoContent = true
 	default:
 		return nil, fmt.Errorf("unsupported dialect %T", d)
 	}
@@ -356,8 +356,8 @@ func decodeQueryRequest(ctx context.Context, r *http.Request, svc influxdb.Organ
 		}
 	}
 
-	if r.Header.Get(AcceptNullHeaderKey) == AcceptNullHeaderValue {
-		req.AcceptNull = true
+	if r.Header.Get(PreferHeaderKey) == PreferNoContentHeaderValue {
+		req.PreferNoContent = true
 	}
 
 	req = req.WithDefaults()
