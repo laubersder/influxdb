@@ -97,8 +97,8 @@ all_statuses
 				},
 			},
 			endpoint: &endpoint.Slack{
-				Base: endpoint.Base{
-					ID:   idPtr(2),
+				EndpointBase: influxdb.EndpointBase{
+					ID:   2,
 					Name: "foo",
 				},
 				URL: "http://localhost:7777",
@@ -173,8 +173,8 @@ all_statuses
 				},
 			},
 			endpoint: &endpoint.Slack{
-				Base: endpoint.Base{
-					ID:   idPtr(2),
+				EndpointBase: influxdb.EndpointBase{
+					ID:   2,
 					Name: "foo",
 				},
 				URL: "http://localhost:7777",
@@ -250,8 +250,8 @@ all_statuses
 				},
 			},
 			endpoint: &endpoint.Slack{
-				Base: endpoint.Base{
-					ID:   idPtr(2),
+				EndpointBase: influxdb.EndpointBase{
+					ID:   2,
 					Name: "foo",
 				},
 				Token: influxdb.SecretField{
@@ -329,8 +329,8 @@ all_statuses
 				},
 			},
 			endpoint: &endpoint.Slack{
-				Base: endpoint.Base{
-					ID:   idPtr(2),
+				EndpointBase: influxdb.EndpointBase{
+					ID:   2,
 					Name: "foo",
 				},
 				URL: "http://localhost:7777",
