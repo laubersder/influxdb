@@ -51,11 +51,6 @@ func init() {
 		panic(fmt.Errorf("failed to determine influx directory: %v", err))
 	}
 
-	boltFile, err := fs.BoltFile()
-	if err != nil {
-		panic(fmt.Errorf("failed to determine bolt file: %v", err))
-	}
-
 	Command.Flags().SortFlags = false
 
 	pfs := Command.PersistentFlags()
@@ -65,7 +60,7 @@ func init() {
 		{
 			DestP:   &flags.boltPath,
 			Flag:    "bolt-path",
-			Default: boltFile,
+			Default: filepath.Join(dir, bolt.DefaultFilename),
 			Desc:    "path to target boltdb database",
 		},
 		{
